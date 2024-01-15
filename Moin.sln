@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{24800738-A77
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoinBackend.Domain", "src\MoinBackend.Domain\MoinBackend.Domain.csproj", "{EE2C60D1-2D4E-429F-BCF9-7C0423D05F69}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoinBackend", "src\MoinBackend\MoinBackend.csproj", "{4C63184F-A9F2-41EA-A277-63E9B90B3092}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,11 +19,16 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EE2C60D1-2D4E-429F-BCF9-7C0423D05F69} = {24800738-A775-4EF7-84E0-2B8D4DFE0143}
+		{4C63184F-A9F2-41EA-A277-63E9B90B3092} = {24800738-A775-4EF7-84E0-2B8D4DFE0143}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{EE2C60D1-2D4E-429F-BCF9-7C0423D05F69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EE2C60D1-2D4E-429F-BCF9-7C0423D05F69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE2C60D1-2D4E-429F-BCF9-7C0423D05F69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE2C60D1-2D4E-429F-BCF9-7C0423D05F69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C63184F-A9F2-41EA-A277-63E9B90B3092}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C63184F-A9F2-41EA-A277-63E9B90B3092}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C63184F-A9F2-41EA-A277-63E9B90B3092}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C63184F-A9F2-41EA-A277-63E9B90B3092}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
