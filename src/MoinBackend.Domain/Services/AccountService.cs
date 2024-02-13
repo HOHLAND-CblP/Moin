@@ -9,8 +9,9 @@ public class AccountService : IAccountService
     {
         throw new NotImplementedException();
     }
+    
 
-    public Task<long> GetAccount(long id, CancellationToken token)
+    public Task<Account> Get(long id, CancellationToken token)
     {
         throw new NotImplementedException();
     }
