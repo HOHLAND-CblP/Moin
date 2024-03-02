@@ -1,5 +1,9 @@
 using System.Collections.Specialized;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using MoinBackend.Domain;
+using MoinBackend.Infrastructure;
+
 
 class Program
 {
@@ -10,18 +14,27 @@ class Program
         
         NameValueCollection appSetings = System.Configuration.ConfigurationManager.AppSettings;
         
+
+        services.AddDomain();
+        services.AddInfrastructure();
         services.AddControllers();
+
+        services.AddAuthentication(config =>
+        {
+            config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+            .AddJwtBearer("Bearer",options =>
+            {
+                /*options.TokenValidationParameters = new TokenValidationParameters
+                {
+
+                };*/
+            });
+        
+        
         services.AddSwaggerGen();
 
-        services.AddAuthentication("Bearer")
-            .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-
-                    };
-                }
-                );
         
         var app = builder.Build();
 
