@@ -1,4 +1,5 @@
 using System.Collections.Specialized;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MoinBackend.Domain;
@@ -19,22 +20,26 @@ class Program
         services.AddInfrastructure();
         services.AddControllers();
 
+        
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("1234"));
         services.AddAuthentication(config =>
         {
             config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         })
-            .AddJwtBearer("Bearer",options =>
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,options =>
             {
-                /*options.TokenValidationParameters = new TokenValidationParameters
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-
-                };*/
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = key,
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                };
             });
         
         
         services.AddSwaggerGen();
-
+                                         
         
         var app = builder.Build();
 

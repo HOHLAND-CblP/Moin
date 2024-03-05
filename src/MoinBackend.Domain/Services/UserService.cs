@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using MoinBackend.Domain.Contracts.Repositories;
 using MoinBackend.Domain.Contracts.Services;
+using MoinBackend.Domain.Entities;
 
 namespace MoinBackend.Domain.Services;
 
@@ -10,11 +11,6 @@ public class UserService : IUserService
     private const int SaltLenght = 64;
     private IUserRepository _userRepository;
 
-    public UserService()
-    {
-        
-    }
-    
     public UserService(IUserRepository repository) =>
         _userRepository = repository;
     
@@ -28,21 +24,29 @@ public class UserService : IUserService
         return false;
     }
 
-    public Task SignUp(string login, string password, CancellationToken token)
+    public async Task<long> SignUp(User signupUser, CancellationToken token)
     {
-        /*string hashPassword = MakePbkdf2HashPassword(password);
-        
-        Console.WriteLine(hashPassword);*/
-        return Task.CompletedTask;
+        string hashPassword = CreatePbkdf2Hash(signupUser.Password);
+
+        User user = new User()
+        {
+            Username = signupUser.Username,
+            Email = signupUser.Email,
+            Name = signupUser.Name,
+            Password = hashPassword
+        };
+
+        return await _userRepository.Create(user, token);
     }
     
-    public Task Login(string login, string password, CancellationToken token)
+    public async Task<bool> Login(string username, string password, CancellationToken token)
     {
-        
-        return Task.CompletedTask;
+        var user = await _userRepository.GetUserByUsername(username, token);
+
+        return user != null && CheckPassword(password, user.Password);
     }
 
-    /*public string CreateHash(string password)
+    private string CreatePbkdf2Hash(string password)
     {
         byte[] salt = GenerateSalt();
         string hashPassword = MakePbkdf2HashPassword(password, salt);
@@ -51,14 +55,14 @@ public class UserService : IUserService
     }
 
     
-    public bool CheckPassword(string password, string hash)
+    private bool CheckPassword(string password, string hash)
     {
         byte[] salt = GetSalt(hash);
 
         string hashPassword = MakePbkdf2HashPassword(password, salt);
 
         return hash == hashPassword;
-    }*/
+    }
 
     private byte[] GetSalt(string hash)
     {
