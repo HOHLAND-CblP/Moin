@@ -1,34 +1,36 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using MoinBackend.Domain.Contracts.Responses;
 using MoinBackend.Domain.Contracts.Services;
 using MoinBackend.Domain.Entities;
+using MoinBackend.Models;
 
 namespace MoinBackend.Controllers;
 
+[ApiController]
+[Route("api/[controller]")]
 public class UserController : Controller
 {
     private readonly IUserService _userService;
-
+    
     public UserController(IUserService service)
     {
         _userService = service;
     }
 
-    public async Task Login(string username, string password, CancellationToken token)
+    [HttpPost]
+    [Route("Login")]
+    public async Task<AuthenticateResponse> Login([FromBody]LoginModel loginModel, CancellationToken token)
     {
-        var result = await _userService.Login(username, password, token);
+        var response = await _userService.Login(loginModel.Username, loginModel.Password, token);
 
-        if (result)
-            HttpContext.Response.Cookies.Append(".AspNetCore.Controllers.Method", "1234token",
-                new CookieOptions
-                {
-                    MaxAge = TimeSpan.FromDays(7),
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict,
-                });
-        else
+        if (response != null)   
         {
-            HttpContext.Response.StatusCode = 400;
+            return response;
         }
+
+        Response.StatusCode = 400;
+
+        return null;
     }
 }

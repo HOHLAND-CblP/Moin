@@ -1,8 +1,14 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using MoinBackend.Domain.Contracts.Repositories;
+using MoinBackend.Domain.Contracts.Responses;
 using MoinBackend.Domain.Contracts.Services;
 using MoinBackend.Domain.Entities;
+using MoinBackend.Domain.Settings;
 
 namespace MoinBackend.Domain.Services;
 
@@ -10,9 +16,13 @@ public class UserService : IUserService
 {
     private const int SaltLenght = 64;
     private IUserRepository _userRepository;
-
-    public UserService(IUserRepository repository) =>
+    private readonly AuthSettings _authSettings;
+    
+    public UserService(IUserRepository repository, IOptions<AuthSettings> authSettings)
+    {
         _userRepository = repository;
+        _authSettings = authSettings.Value;
+    }
     
     public async Task<bool> IsUsernameBusy(string username, CancellationToken token)
     {
@@ -24,7 +34,7 @@ public class UserService : IUserService
         return false;
     }
 
-    public async Task<long> SignUp(User signupUser, CancellationToken token)
+    public async Task<AuthenticateResponse> SignUp(User signupUser, CancellationToken token)
     {
         string hashPassword = CreatePbkdf2Hash(signupUser.Password);
 
@@ -36,16 +46,68 @@ public class UserService : IUserService
             Password = hashPassword
         };
 
-        return await _userRepository.Create(user, token);
+        var userId = await _userRepository.Create(user, token);
+        AuthenticateResponse response = new AuthenticateResponse()
+        {
+            User = new User
+            {
+                Id = userId,
+                Username = signupUser.Username,
+                Email = signupUser.Email,
+                Name = signupUser.Name
+            },
+            Token = GenerateJWT(user)
+                
+        };
+
+        return response;
     }
     
-    public async Task<bool> Login(string username, string password, CancellationToken token)
+    public async Task<AuthenticateResponse> Login(string username, string password, CancellationToken token)
     {
         var user = await _userRepository.GetUserByUsername(username, token);
 
-        return user != null && CheckPassword(password, user.Password);
+        
+
+        if (user != null && CheckPassword(password, user.Password))
+            return new AuthenticateResponse()
+            {
+                User = user,
+                Token = GenerateJWT(user)
+            };
+        
+        return null;
     }
 
+
+
+
+
+    private string GenerateJWT(User user)
+    {
+
+        var credentials = new SigningCredentials(_authSettings.GetSymmetricSecurityKey(),
+            SecurityAlgorithms.HmacSha256);
+        
+        var claims = new List<Claim>()
+        {
+            new Claim(JwtRegisteredClaimNames.Sid, user.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email)
+        };
+
+        var token = new JwtSecurityToken(
+            _authSettings.Issuer,
+            _authSettings.Audience,
+            claims,
+            expires:DateTime.UtcNow.AddSeconds(_authSettings.TokenLifeTimeInSeconds),
+            signingCredentials:credentials);
+        
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+    
+    
+    
     private string CreatePbkdf2Hash(string password)
     {
         byte[] salt = GenerateSalt();
