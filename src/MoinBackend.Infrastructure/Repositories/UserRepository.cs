@@ -3,8 +3,11 @@ using MoinBackend.Domain.Entities;
 
 namespace MoinBackend.Infrastructure.Repositories;
 
-public class UserRepository : IUserRepository
+public class UserRepository : PgRepository, IUserRepository
 {
+    public UserRepository(string connectionString) : base(connectionString)
+    {}
+    
     public Task<long> Create(User user, CancellationToken token)
     {
         throw new NotImplementedException();

@@ -7,6 +7,7 @@ using MoinBackend.Domain;
 using MoinBackend.Domain.Services;
 using MoinBackend.Domain.Settings;
 using MoinBackend.Infrastructure;
+using MoinBackend.Infrastructure.Settings;
 
 
 class Program
@@ -18,6 +19,7 @@ class Program
         var config = builder.Configuration;
 
         services.Configure<AuthSettings>(config.GetSection("JWT"));
+        services.Configure<DbsOptions>(config.GetSection("DataBases"));
 
         services.AddDomain();
         services.AddInfrastructure();
