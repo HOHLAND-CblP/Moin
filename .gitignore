@@ -49,3 +49,5 @@ mono_crash.*.blob
 
 # Specific file
 *app.config
+*appsettings.json
+*.json
