@@ -7,7 +7,6 @@ using MoinBackend.Domain;
 using MoinBackend.Domain.Services;
 using MoinBackend.Domain.Settings;
 using MoinBackend.Infrastructure;
-using ConfigurationManager = System.Configuration.ConfigurationManager;
 
 
 class Program
