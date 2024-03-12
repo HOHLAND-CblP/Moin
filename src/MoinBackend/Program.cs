@@ -22,7 +22,7 @@ class Program
         services.Configure<DbsOptions>(config.GetSection("DataBases"));
 
         services.AddDomain();
-        services.AddInfrastructure();
+        services.AddDbInfrastructure();
         services.AddControllers();
 
         var issuer = config["JWT:Issuer"];

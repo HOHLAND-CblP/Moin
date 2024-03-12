@@ -8,7 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\MoinBackend.Domain\MoinBackend.Domain.csproj" />
-      <ProjectReference Include="..\MoinBackend.Infrastructure\MoinBackend.Infrastructure.csproj" />
+      <ProjectReference Include="..\MoinBackend.DbInfrastructure\MoinBackend.DbInfrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>

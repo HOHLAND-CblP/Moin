@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoinBackend.Domain", "src\M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoinBackend", "src\MoinBackend\MoinBackend.csproj", "{4C63184F-A9F2-41EA-A277-63E9B90B3092}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoinBackend.Infrastructure", "src\MoinBackend.Infrastructure\MoinBackend.Infrastructure.csproj", "{99B094A2-6D60-4E13-8610-1800308361A7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoinBackend.DbInfrastructure", "src\MoinBackend.DbInfrastructure\MoinBackend.DbInfrastructure.csproj", "{99B094A2-6D60-4E13-8610-1800308361A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
