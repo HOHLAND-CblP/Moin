@@ -1,11 +1,13 @@
+using Microsoft.Extensions.Options;
 using MoinBackend.Domain.Contracts.Repositories;
 using MoinBackend.Domain.Entities;
+using MoinBackend.Infrastructure.Settings;
 
 namespace MoinBackend.Infrastructure.Repositories;
 
 public class UserRepository : PgRepository, IUserRepository
 {
-    public UserRepository(string connectionString) : base(connectionString)
+    public UserRepository(IOptions<DbsOptions> dbOptions) : base(dbOptions.Value.PostgresConnectionString)
     {}
     
     public Task<long> Create(User user, CancellationToken token)

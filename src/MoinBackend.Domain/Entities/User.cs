@@ -10,4 +10,6 @@ public class User
     public string Email { get; init; }
     [JsonIgnore]
     public string Password { get; init; }
+    public DateTime CreationDate { get; init; }
+    public DateTime? LastUpdateDate { get; init; }
 }

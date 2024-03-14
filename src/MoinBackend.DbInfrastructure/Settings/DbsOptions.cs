@@ -2,5 +2,5 @@
 
 public class DbsOptions
 {
-    public string PostgresConnectionString { get; init; }
+    public required string PostgresConnectionString { get; init; }
 }

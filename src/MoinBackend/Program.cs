@@ -1,10 +1,9 @@
 using System.Text;
-using System.Collections.Specialized;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MoinBackend.Domain;
-using MoinBackend.Domain.Services;
+
 using MoinBackend.Domain.Settings;
 using MoinBackend.Infrastructure;
 using MoinBackend.Infrastructure.Settings;
@@ -17,14 +16,13 @@ class Program
         var builder = WebApplication.CreateBuilder(args);
         var services = builder.Services;
         var config = builder.Configuration;
+        
 
-        services.Configure<AuthSettings>(config.GetSection("JWT"));
-        services.Configure<DbsOptions>(config.GetSection("DataBases"));
-
-        services.AddDomain();
-        services.AddDbInfrastructure();
+        services.AddDomain(config);
+        services.AddDbInfrastructure(config);
         services.AddControllers();
 
+        
         var issuer = config["JWT:Issuer"];
         var audience = config["JWT:Audience"];
         var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(config["JWT:SecretKey"]));
