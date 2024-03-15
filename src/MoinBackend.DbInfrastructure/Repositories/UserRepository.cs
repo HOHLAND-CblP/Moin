@@ -1,3 +1,4 @@
+using Dapper;
 using Microsoft.Extensions.Options;
 using MoinBackend.Domain.Contracts.Repositories;
 using MoinBackend.Domain.Entities;
@@ -10,21 +11,54 @@ public class UserRepository : PgRepository, IUserRepository
     public UserRepository(IOptions<DbsOptions> dbOptions) : base(dbOptions.Value.PostgresConnectionString)
     {}
     
-    public Task<long> Create(User user, CancellationToken token)
+    public async Task<long> Create(User user, CancellationToken token)
     {
-        throw new NotImplementedException();
+        List<User> oo = new List<User>();
+
+        oo.Where(u => u.Username == user.Username);
+        
+            string sql =
+                """
+                INSERT INTO users (username, name, email, password, creation_date)
+                    VALUES (@Username, @Name, @Email, @Password, @CreationDate) 
+                returning id;
+            """;
+        
+        
+        await using var connection = await GetConnection();
+        
+        return (await connection.QueryAsync<long>(
+            new CommandDefinition(
+                sql,
+                new
+                {
+                    Username = user.Username,
+                    Name = user.Name,
+                    Email = user.Email,
+                    Password = user.Password,
+                    CreationDate = user.CreationDate
+                },
+                cancellationToken: token))).FirstOrDefault();
     }
 
-    public Task<User> GetUserByUsername(string username, CancellationToken token)
+    public async Task<User> GetUserByUsername(string username, CancellationToken token)
     {
+        string sql =
+            """
+            SELECT *
+            FROM users
+            WHERE username = @Username
+            """;
         
-        return Task.FromResult(new User()
-        {
-            Id = 0,
-            Username = "hohladn_cblp",
-            Email = "ismail987654321lkjhgfdsa@gmail.com",
-            Name = "Ismail",
-            Password = "XM66q2yxUTdH/W6A8M9AuEgyUg28ozx4SX+oM5QBwd5u+3i1idIrOI/u8e6QlNhXonCtdn2cc1a0b2QCN2Q0XMWOBOUb+HsJuDrImWTk/K39/6WeYl06V/UVQYtHUGp30PDD1J10IuKaNJ23tcpGg4u5HaUcLIR+Ag+63o8cqow="
-        });
+        await using var connection = await GetConnection();
+        
+        return (await connection.QueryAsync<User>(
+            new CommandDefinition(
+                sql,
+                new
+                {
+                    Username = username
+                },
+                cancellationToken: token))).FirstOrDefault();
     }
 }

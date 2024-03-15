@@ -17,6 +17,7 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IAccountRepository, AccountRepository>();
         
+        Postgres.MapCompositeTypes();
         Postgres.AddMigration(services, 
             services.BuildServiceProvider().GetService<IOptions<DbsOptions>>().Value.PostgresConnectionString);
         
