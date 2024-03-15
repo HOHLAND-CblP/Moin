@@ -10,5 +10,34 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
+  },
+
+  "profiles": {
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:7088;http://localhost:7087",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Migrate Up": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "migrate Up",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Migrate Down": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "commandLineArgs": "migrate Down 0",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
   }
 }

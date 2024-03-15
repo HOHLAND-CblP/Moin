@@ -1,4 +1,6 @@
 using System.Text;
+using FluentMigrator.Runner;
+using FluentMigrator.Runner.BatchParser.RangeSearchers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -78,6 +80,27 @@ class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
+        
+        if (args.Length > 0 && args[0].Equals("migrate", StringComparison.InvariantCultureIgnoreCase))
+        {
+            using var scope = app.Services.CreateScope();
+            var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
+
+            switch (args[1])
+            {
+                case "Up":
+                    runner.MigrateUp();
+                    break;
+                case "Down":
+                    runner.MigrateDown(Int32.Parse(args[2]));
+                    break;
+                default:
+                    Console.WriteLine("Invalid second argument. Please write \"Up\" or \"Down\"");
+                    break;
+            }
+            
+            return;
+        }
         
         if (app.Environment.IsDevelopment())
         {

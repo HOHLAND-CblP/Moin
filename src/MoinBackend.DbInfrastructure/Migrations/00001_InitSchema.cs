@@ -9,13 +9,13 @@ public class InitSchema : Migration
     {
         const string sql = 
             """
-            CREATE TABLE IF NOT EXISTS Users (
+            CREATE TABLE IF NOT EXISTS users (
                 id                  bigserial PRIMARY KEY,
-                username            varchar NOT NULL,
+                username            varchar NOT NULL UNIQUE,
                 name                varchar NOT NULL,
                 email               varchar NOT NULL,
                 password            varchar NOT NULL,
-                creation_date       timestamp with time zone NULL default (now() at time zone 'utc'),
+                creation_date       timestamp with time zone NOT NULL default (now() at time zone 'utc' ),
                 last_update_date    timestamp with time zone NULL
             );            
             """;
@@ -27,7 +27,7 @@ public class InitSchema : Migration
     {
         const string sql =
             """
-            DROP TABLE Users;
+            DROP TABLE users;
             """;
         
         Execute.Sql(sql);
