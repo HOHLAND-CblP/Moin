@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using MoinBackend.Domain.Contracts.Responses;
 using MoinBackend.Domain.Contracts.Services;
@@ -9,7 +10,7 @@ namespace MoinBackend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UserController : Controller
+public class UserController : BaseController
 {
     private readonly IUserService _userService;
     
@@ -18,6 +19,29 @@ public class UserController : Controller
         _userService = service;
     }
 
+    [HttpPost]
+    [Route("SignUp")]
+    public async Task<AuthenticateResponse> SignUp([FromBody] SignUpModel model, CancellationToken token)
+    {
+        User user = new User
+        {
+            Username = model.Username,
+            Name = model.Name,
+            Email = model.Email,
+            Password = model.Password
+        };
+        var response = await _userService.SignUp(user, token);
+
+        if (response != null)
+        {
+            return response;
+        }
+
+        Response.StatusCode = 400;
+        
+        return null;
+    }
+    
     [HttpPost]
     [Route("Login")]
     public async Task<AuthenticateResponse> Login([FromBody]LoginModel loginModel, CancellationToken token)
@@ -32,5 +56,13 @@ public class UserController : Controller
         Response.StatusCode = 400;
 
         return null;
+    }
+
+    [Authorize]
+    [HttpDelete]
+    [Route("Delete")]
+    public async Task DeleteUser(CancellationToken token)
+    {
+        await _userService.DeleteUser(Username, token);
     }
 }

@@ -14,7 +14,7 @@ namespace MoinBackend.Domain.Services;
 
 public class UserService : IUserService
 {
-    private const int SaltLenght = 64;
+    private const int SaltLength = 64;
     private IUserRepository _userRepository;
     private readonly AuthSettings _authSettings;
     
@@ -43,7 +43,8 @@ public class UserService : IUserService
             Username = signupUser.Username,
             Email = signupUser.Email,
             Name = signupUser.Name,
-            Password = hashPassword
+            Password = hashPassword,
+            CreationDate = DateTime.UtcNow
         };
 
         var userId = await _userRepository.Create(user, token);
@@ -52,9 +53,10 @@ public class UserService : IUserService
             User = new User
             {
                 Id = userId,
-                Username = signupUser.Username,
-                Email = signupUser.Email,
-                Name = signupUser.Name
+                Username = user.Username,
+                Email = user.Email,
+                Name = user.Name,
+                CreationDate = user.CreationDate
             },
             Token = GenerateJWT(user)
                 
@@ -79,6 +81,11 @@ public class UserService : IUserService
         return null;
     }
 
+    public async Task DeleteUser(string username, CancellationToken token)
+    {
+        
+    }
+
 
 
 
@@ -92,7 +99,7 @@ public class UserService : IUserService
         var claims = new List<Claim>()
         {
             new Claim(JwtRegisteredClaimNames.Sid, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
+            new Claim("Username", user.Username),
             new Claim(JwtRegisteredClaimNames.Email, user.Email)
         };
 
@@ -129,10 +136,10 @@ public class UserService : IUserService
     private byte[] GetSalt(string hash)
     {
         byte[] hashBytes = Convert.FromBase64String(hash);
-        byte[] salt = new byte[SaltLenght];
+        byte[] salt = new byte[SaltLength];
 
-        for (int i = 0; i < SaltLenght; i++)
-            salt[i] = hashBytes[hashBytes.Length - SaltLenght + i];
+        for (int i = 0; i < SaltLength; i++)
+            salt[i] = hashBytes[hashBytes.Length - SaltLength + i];
         
         return salt;
     }
@@ -166,7 +173,7 @@ public class UserService : IUserService
 
     private byte[] GenerateSalt()
     {
-        byte[] salt = new byte[SaltLenght];
+        byte[] salt = new byte[SaltLength];
         
         var rngRand = new RNGCryptoServiceProvider();
         rngRand.GetBytes(salt);
