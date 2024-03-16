@@ -61,4 +61,23 @@ public class UserRepository : PgRepository, IUserRepository
                 },
                 cancellationToken: token))).FirstOrDefault();
     }
+
+    public async Task DeleteUser(long id, CancellationToken token)
+    {
+        string sql =
+            """
+            DELETE FROM users
+            WHERE @Id=id;
+            """;
+        
+        await using var connection = await GetConnection();
+        await connection.ExecuteAsync(
+            new CommandDefinition(
+                sql,
+                new
+                {
+                    Id = id
+                },
+                cancellationToken: token));
+    }
 }

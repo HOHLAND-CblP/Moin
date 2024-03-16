@@ -5,8 +5,8 @@ namespace MoinBackend.Domain.Contracts.Services;
 
 public interface IUserService
 {
-    Task<bool> IsUsernameBusy(string username, CancellationToken token);   
+    Task<bool> IsUsernameAvailable(string username, CancellationToken token);   
     Task<AuthenticateResponse> SignUp(User user, CancellationToken token);
     Task<AuthenticateResponse> Login(string username, string password, CancellationToken token);
-    Task DeleteUser(string username, CancellationToken token);
+    Task DeleteUser(long id, CancellationToken token);
 }

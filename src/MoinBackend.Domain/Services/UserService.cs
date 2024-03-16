@@ -24,7 +24,7 @@ public class UserService : IUserService
         _authSettings = authSettings.Value;
     }
     
-    public async Task<bool> IsUsernameBusy(string username, CancellationToken token)
+    public async Task<bool> IsUsernameAvailable(string username, CancellationToken token)
     {
         if (await _userRepository.GetUserByUsername(username, token) == null)
         {
@@ -48,17 +48,19 @@ public class UserService : IUserService
         };
 
         var userId = await _userRepository.Create(user, token);
+        var userResponse = new User
+        {
+            Id = userId,
+            Username = user.Username,
+            Email = user.Email,
+            Name = user.Name,
+            CreationDate = user.CreationDate
+        };
+            
         AuthenticateResponse response = new AuthenticateResponse()
         {
-            User = new User
-            {
-                Id = userId,
-                Username = user.Username,
-                Email = user.Email,
-                Name = user.Name,
-                CreationDate = user.CreationDate
-            },
-            Token = GenerateJWT(user)
+            User = userResponse,
+            Token = GenerateJWT(userResponse)
                 
         };
 
@@ -81,9 +83,9 @@ public class UserService : IUserService
         return null;
     }
 
-    public async Task DeleteUser(string username, CancellationToken token)
+    public async Task DeleteUser(long id, CancellationToken token)
     {
-        
+        _userRepository.DeleteUser(id, token);
     }
 
 

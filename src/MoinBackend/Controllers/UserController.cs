@@ -18,7 +18,15 @@ public class UserController : BaseController
     {
         _userService = service;
     }
-
+    
+    [HttpGet]
+    [Route("CheckUsername")]
+    public async Task<bool> IsUsernameAvailable(string username, CancellationToken token)
+    {
+        return await _userService.IsUsernameAvailable(username, token);
+    }
+    
+    
     [HttpPost]
     [Route("SignUp")]
     public async Task<AuthenticateResponse> SignUp([FromBody] SignUpModel model, CancellationToken token)
@@ -63,6 +71,6 @@ public class UserController : BaseController
     [Route("Delete")]
     public async Task DeleteUser(CancellationToken token)
     {
-        await _userService.DeleteUser(Username, token);
+        await _userService.DeleteUser(UserId, token);
     }
 }
