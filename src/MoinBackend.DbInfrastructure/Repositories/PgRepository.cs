@@ -21,6 +21,7 @@ public abstract class PgRepository
         }
 
         var connection = new NpgsqlConnection(_connectionString);
+        await connection.GetSchemaAsync("moin_schema");
         await connection.OpenAsync();
 
         return connection;

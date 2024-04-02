@@ -2,12 +2,12 @@
 
 namespace MoinBackend.Infrastructure.Migrations;
 
-[Migration(00001,"InitMigration")]
-public class InitSchema : Migration
+[Migration(202404021600,"Create Users Table")]
+public class CreateUsers : Migration
 {
     public override void Up()
     {
-        const string sql = 
+        const string sql =
             """
             CREATE TABLE IF NOT EXISTS users (
                 id                  bigserial PRIMARY KEY,
@@ -17,7 +17,7 @@ public class InitSchema : Migration
                 password            varchar NOT NULL,
                 creation_date       timestamp with time zone NOT NULL default (now() at time zone 'utc' ),
                 last_update_date    timestamp with time zone NULL
-            );            
+            );
             """;
         
         Execute.Sql(sql);

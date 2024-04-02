@@ -1,3 +1,4 @@
+using Dapper;
 using Microsoft.Extensions.Options;
 using MoinBackend.Domain.Contracts.Repositories;
 using MoinBackend.Domain.Entities;
@@ -10,9 +11,27 @@ public class AccountRepository : PgRepository, IAccountRepository
     public AccountRepository(IOptions<DbsOptions> dbsOptions) : base(dbsOptions.Value.PostgresConnectionString)
     {}
     
-    public Task<long> Create(Account account, CancellationToken token)
+    public async Task<long> Create(Account account, CancellationToken token)
     {
-        throw new NotImplementedException();
+        string sql =
+            $"""
+            INSERT INTO account (userId, value, currency_id)
+                VALUES (@UserId, @Value, @CurrencyId)
+            return id;
+            """;
+        
+        await using var connection = await GetConnection();
+        
+        return (await connection.QueryAsync<long>(
+            new CommandDefinition(
+                sql,
+                new
+                {
+                    UserId = account.UserId,
+                    Value = account.Value,
+                    CurrencyId = account.CurrencyId
+                },
+                cancellationToken: token))).FirstOrDefault();
     }
 
     public Task<Account> GetAccount(long id, CancellationToken token)

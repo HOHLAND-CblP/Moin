@@ -22,5 +22,9 @@
       </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Contracts\Responses\Account\" />
+    </ItemGroup>
+
 
 </Project>

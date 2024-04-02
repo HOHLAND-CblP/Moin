@@ -13,9 +13,9 @@ public class AccountService : IAccountService
         _accountRepository = repository;
     }
     
-    public Task<long> Create(Account account, CancellationToken token)
+    public async Task<long> Create(Account account, CancellationToken token)
     {
-        throw new NotImplementedException();
+        return await _accountRepository.Create(account, token);
     }
     
 
