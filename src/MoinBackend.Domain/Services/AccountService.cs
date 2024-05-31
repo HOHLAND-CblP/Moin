@@ -25,4 +25,16 @@ public class AccountService : IAccountService
 
         return account;
     }
+
+    public async Task<List<Account>> GetAccounts(long userId, CancellationToken token)
+    {
+        var accounts = await _accountRepository.GetAccounts(userId, token);
+
+        return accounts;
+    }
+
+    public async Task Delete(long id, CancellationToken token)
+    {
+        await _accountRepository.Delete(id, token);
+    }
 }

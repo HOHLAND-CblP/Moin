@@ -7,22 +7,14 @@ public class CreateAccounts : Migration
 {
     public override void Up()
     {
-        /*Create.Table("currencies")
-            .WithColumn("id").AsInt64().PrimaryKey().Identity()
-            .WithColumn("name").AsString().NotNullable()
-            .WithColumn("currency_code").AsString().NotNullable()
-            .WithColumn("currency_symbol").AsCustom("\"char\"").NotNullable();*/
-
         const string sql =
             """
             CREATE TABLE IF NOT EXISTS currencies (
               id                serial PRIMARY KEY,
               name              varchar NOT NULL,
-              currency_code     varchar NOT NULL,
+              currency_code     varchar(3) NOT NULL,
               currency_symbol   char NOT NULL
             );
-
-
             """;
 
         Execute.Sql(sql);
@@ -31,7 +23,9 @@ public class CreateAccounts : Migration
             .WithColumn("id").AsInt64().PrimaryKey().Identity()
             .WithColumn("user_id").AsInt64().ForeignKey("users", "id").NotNullable()
             .WithColumn("value").AsDecimal().NotNullable()
-            .WithColumn("currency_id").AsInt32().ForeignKey("currencies", "id").NotNullable();
+            .WithColumn("currency_id").AsInt32().ForeignKey("currencies", "id").NotNullable()
+            .WithColumn("creation_date").AsString().NotNullable()
+            .WithColumn("last_update_date").AsString().Nullable();
     }
 
     public override void Down()

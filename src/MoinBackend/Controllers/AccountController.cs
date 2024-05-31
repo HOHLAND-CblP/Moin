@@ -8,16 +8,15 @@ namespace MoinBackend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AccountController : Controller
+public class AccountController : BaseController
 {
     private readonly IAccountService _service;
-
-    internal long UserId => long.Parse(User.FindFirst("sid").Value);
-
+    
     public AccountController(IAccountService service)
     {
         _service = service;
     }
+
     
     [Authorize]
     [HttpPost("[action]")]
@@ -28,12 +27,30 @@ public class AccountController : Controller
     
     [Authorize]
     [HttpGet("[action]")]
-    public async Task<ActionResult<Account>> Get(long id, CancellationToken token)
+    public async Task<ActionResult<Account>> GetAccount(long id, CancellationToken token)
     {
         var result = await _service.Get(id, token);
         if (result.UserId == UserId)
             return result;
         
         return null;
+    }
+    
+    [Authorize]
+    [HttpGet("[action]")]
+    public async Task<ActionResult<List<Account>>> GetAccounts(CancellationToken token)
+    {
+        var result = await _service.GetAccounts(UserId, token);
+        
+        return result;
+    }
+
+    [Authorize]
+    [HttpGet("[action]")]
+    public async Task<ActionResult> Delete(long id, CancellationToken token)
+    {
+        await _service.Delete(id, token);
+
+        return Ok();
     }
 }

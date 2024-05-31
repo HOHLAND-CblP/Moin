@@ -6,5 +6,7 @@ public interface IAccountService
 {
     Task<long> Create(Account account, CancellationToken token);
     Task<Account> Get(long id, CancellationToken token);
-    //Task<long> GetAccounts()
+    Task<List<Account>> GetAccounts(long userId, CancellationToken token);
+    Task Delete(long id, CancellationToken token);
+    
 }

@@ -15,7 +15,7 @@ public class AccountRepository : PgRepository, IAccountRepository
     {
         string sql =
             $"""
-            INSERT INTO account (userId, value, currency_id)
+            INSERT INTO accounts (userId, value, currency_id)
                 VALUES (@UserId, @Value, @CurrencyId)
             return id;
             """;
@@ -34,14 +34,65 @@ public class AccountRepository : PgRepository, IAccountRepository
                 cancellationToken: token))).FirstOrDefault();
     }
 
-    public Task<Account> GetAccount(long id, CancellationToken token)
+    public async Task<Account> GetAccount(long id, CancellationToken token)
     {
-        return Task.FromResult(new Account()
-        {
-            Id = 0,
-            UserId = 1,
-            Value = 10,
-            CurrencyId = 0
-        });
+        string sql =
+            """
+            SELECT *
+            FROM accounts
+            WHERE @Id = id
+            """;
+        
+        await using var connection = await GetConnection();
+        
+        return (await connection.QueryAsync<Account>(
+            new CommandDefinition(
+                sql,
+                new
+                {
+                    Id = id
+                },
+                cancellationToken: token))).FirstOrDefault();
+    }
+
+    public async Task<List<Account>> GetAccounts(long userId, CancellationToken token)
+    {
+        string sql =
+            """
+            SELECT *
+            FROM accounts
+            WHERE @Id = user_id
+            """;
+        
+        await using var connection = await GetConnection();
+        
+        return (await connection.QueryAsync<Account>(
+            new CommandDefinition(
+                sql,
+                new
+                {
+                    Id = userId
+                },
+                cancellationToken: token))).ToList();
+    }
+
+    public async Task Delete(long id, CancellationToken token)
+    {
+        string sql =
+            """
+            DELETE FROM accounts
+            WHERE @Id=id;
+            """;
+        
+        await using var connection = await GetConnection();
+        
+        await connection.ExecuteAsync(
+            new CommandDefinition(
+                sql,
+                new
+                {
+                    Id = id
+                },
+                cancellationToken: token));
     }
 }

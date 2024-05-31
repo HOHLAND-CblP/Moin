@@ -2,6 +2,6 @@ namespace MoinBackend.Domain.Entities;
 
 public enum TransactionType
 {
-    Expenses = 1,
-    Income = 2
+    Income = 0,
+    Expense = 1,
 }

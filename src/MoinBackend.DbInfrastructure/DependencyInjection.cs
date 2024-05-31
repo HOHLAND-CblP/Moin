@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MoinBackend.Domain.Contracts.Repositories;
-using MoinBackend.Infrastructure.Infrasructure;
+using MoinBackend.Infrastructure.Infrastructure;
 using MoinBackend.Infrastructure.Repositories;
 using MoinBackend.Infrastructure.Settings;
 

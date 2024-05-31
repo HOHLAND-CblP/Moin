@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
-namespace MoinBackend.Infrastructure.Infrasructure;
+namespace MoinBackend.Infrastructure.Infrastructure;
 
 public class Postgres
 {
