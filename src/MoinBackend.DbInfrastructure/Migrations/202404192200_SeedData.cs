@@ -9,16 +9,19 @@ public class SeedData : Migration
     {
         const string sql =
             """
-            insert into currencies (id, name, currency_code, currency_symbol)
-            values (1,    'Dollar USA', 'USD', '$')
+                        
+
+            INSERT INTO currencies (id, name, currency_code, currency_symbol)
+            VALUES (1,    'Dollar USA', 'USD', '$')
                  , (2,          'Euro', 'EUR', '€')
                  , (3, 'Russian Ruble', 'RUB', '₽')
             """;
+
+        Execute.Sql(sql);
     }
 
     public override void Down()
     {
-        Delete.FromTable("currencies")
-            .AllRows();
+        
     }
 }

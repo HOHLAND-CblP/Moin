@@ -15,6 +15,14 @@ public class AccountService : IAccountService
     
     public async Task<long> Create(Account account, CancellationToken token)
     {
+        account = new Account
+        {
+            UserId = account.UserId,
+            Value = account.Value,
+            CurrencyId = account.CurrencyId,
+            CreationDate = DateTime.UtcNow
+        };
+        
         return await _accountRepository.Create(account, token);
     }
     

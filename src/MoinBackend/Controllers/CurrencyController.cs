@@ -24,7 +24,6 @@ public class CurrencyController : BaseController
         return await _service.Create(currency, token);
     }*/
     
-    [Authorize]
     [HttpGet("[action]")]
     public async Task<ActionResult<Currency>> Get(long id, CancellationToken token)
     {
@@ -33,7 +32,7 @@ public class CurrencyController : BaseController
         return result;
     }
     
-    [Authorize]
+    
     [HttpGet("[action]")]
     public async Task<ActionResult<List<Currency>>> GetAll(CancellationToken token)
     {
@@ -42,12 +41,12 @@ public class CurrencyController : BaseController
         return result;
     }
 
-    [Authorize]
+    /*[Authorize]
     [HttpGet("[action]")]
     public async Task<ActionResult> Delete(long id, CancellationToken token)
     {
         await _service.DeleteCurrency(id, token);   
 
         return Ok();
-    }
+    }*/
 }

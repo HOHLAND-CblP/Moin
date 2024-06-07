@@ -24,17 +24,17 @@ public class CreateAccounts : Migration
             .WithColumn("user_id").AsInt64().ForeignKey("users", "id").NotNullable()
             .WithColumn("value").AsDecimal().NotNullable()
             .WithColumn("currency_id").AsInt32().ForeignKey("currencies", "id").NotNullable()
-            .WithColumn("creation_date").AsString().NotNullable()
-            .WithColumn("last_update_date").AsString().Nullable();
+            .WithColumn("creation_date").AsDateTimeOffset().NotNullable()
+            .WithColumn("last_update_date").AsDateTimeOffset().Nullable();
     }
 
     public override void Down()
     {
-        
         const string sql =
             """
-            DROP TABLE accounts;
-            DROP TABLE currencies;
+            DROP TABLE IF EXISTS accounts;
+            DELETE FROM currencies;
+            DROP TABLE IF EXISTS currencies;
             """;
         
         Execute.Sql(sql);

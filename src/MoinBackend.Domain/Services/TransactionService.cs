@@ -30,15 +30,30 @@ public class TransactionService : ITransactionService
         
         return await _repository.Create(transaction, token);
     }
+    
+    public async Task<long> CreateCategory(TransactionCategory category, CancellationToken token)
+    {
+        return await _repository.CreateCategory(category, token);
+    }
 
     public async Task<Transaction> Get(long id, CancellationToken token)
     {
         return await _repository.Get(id, token);
     }
 
-    public async Task<TransactionType> GetType(long id, CancellationToken token)
+    public async Task<TransactionCategory> GetCategory(long id, CancellationToken token)
     {
-        return await _repository.GetType(id, token);
+        return await _repository.GetCategory(id, token);
+    }
+
+    public async Task<List<TransactionCategory>> GetAllCategories(long userId, CancellationToken token)
+    {
+        return await _repository.GetAllCategories(userId, token);
+    }
+
+    public async Task<TransactionType> GetType(long transactionId, CancellationToken token)
+    {
+        return await _repository.GetType(transactionId, token);
     }
 
     public async Task<List<Transaction>> GetTransactions(long accountId, CancellationToken token)
@@ -49,5 +64,10 @@ public class TransactionService : ITransactionService
     public async Task Delete(long id, CancellationToken token)
     {
         await _repository.Delete(id, token);
+    }
+
+    public async Task DeleteCategory(long id, CancellationToken token)
+    {
+        await _repository.DeleteCategory(id, token);
     }
 }

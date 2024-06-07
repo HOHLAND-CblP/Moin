@@ -1,20 +1,27 @@
 using Dapper;
+using Microsoft.Extensions.Options;
 using MoinBackend.Domain.Contracts.Repositories;
 using MoinBackend.Domain.Entities;
+using MoinBackend.Infrastructure.Settings;
 
 namespace MoinBackend.Infrastructure.Repositories;
 
 public class TransactionRepository : PgRepository, ITransactionRepository
 {
-    public TransactionRepository(string connectionString) : base(connectionString) {}
+    public TransactionRepository(IOptions<DbsOptions> dbsOptions) : base(dbsOptions.Value.PostgresConnectionString) {}
     
     public async Task<long> Create(Transaction transaction, CancellationToken token)
     {
+        char sign = transaction.Type == TransactionType.Expense ? '-' : '+';
         string sql =
             $"""
-             INSERT INTO transactions (account_id, type_id, value, creation_date)
-                 VALUES (@AccountId, @TypeId, @Value, @CreationDate)
-             return id;
+             INSERT INTO transactions (account_id, value, type, category_id, creation_date)
+                 VALUES (@AccountId, @Value, @Type, @CategoryId, @CreationDate)
+             returning id;
+
+             UPDATE accounts 
+             SET value = value {sign} @Value
+             WHERE id = @AccountId
              """;
         
         await using var connection = await GetConnection();
@@ -25,9 +32,37 @@ public class TransactionRepository : PgRepository, ITransactionRepository
                 new
                 {
                     AccountId = transaction.AccountId,
-                    TypeId = transaction.TypeId,
                     Value = transaction.Value,
+                    Type = transaction.Type.ToString(),
+                    CategoryId = transaction.CategoryId,
                     CreationDate = transaction.CreationDate
+                },
+                cancellationToken: token))).FirstOrDefault();
+    }
+
+    public async Task<long> CreateCategory(TransactionCategory category, CancellationToken token)
+    {
+        string next_id = category.Type == TransactionType.Expense
+            ? "nextval('transaction_categories_expense_id_seq')"
+            : "nextval('transaction_categories_income_id_seq')";
+        
+        string sql =
+            $"""
+             INSERT INTO transaction_categories (id, name, type, user_id)
+                 VALUES ({next_id}, @Name, @Type, @UserId)
+             returning id;
+             """;
+        
+        await using var connection = await GetConnection();
+        
+        return (await connection.QueryAsync<long>(
+            new CommandDefinition(
+                sql,
+                new
+                {
+                    Name = category.Name,
+                    Type = category.Type.ToString(),
+                    UserId = category.UserId
                 },
                 cancellationToken: token))).FirstOrDefault();
     }
@@ -53,26 +88,67 @@ public class TransactionRepository : PgRepository, ITransactionRepository
                 cancellationToken: token))).FirstOrDefault();
     }
 
+    public async Task<TransactionCategory> GetCategory(long id, CancellationToken token)
+    {
+        string sql =
+            $"""
+             SELECT *
+             FROM transaction_categories
+             WHERE @Id = id
+             """;
+        
+        await using var connection = await GetConnection();
+        
+        return (await connection.QueryAsync<TransactionCategory>(
+            new CommandDefinition(
+                sql,
+                new
+                {
+                    Id = id
+                },
+                cancellationToken: token))).FirstOrDefault();
+    }
+
+    public async Task<List<TransactionCategory>> GetAllCategories(long userId, CancellationToken token)
+    {
+        string sql =
+            $"""
+             SELECT *
+             FROM transaction_categories
+             WHERE @UserId = user_id
+             """;
+        
+        await using var connection = await GetConnection();
+        
+        return (await connection.QueryAsync<TransactionCategory>(
+            new CommandDefinition(
+                sql,
+                new
+                {
+                    UserId = userId
+                },
+                cancellationToken: token))).ToList();
+    }
+
     public async Task<TransactionType> GetType(long transactionId, CancellationToken token)
     {
         string sql =
             $"""
              SELECT *
-             FROM transaction_types tt
-             JOIN transactions t ON (tt.id = t.type_id)
-             WHERE @Id = t.id
+             FROM transactions 
+             WHERE @Id = id
              """;
         
         await using var connection = await GetConnection();
-        
-        return (await connection.QueryAsync<TransactionType>(
+
+        return (await connection.QueryAsync<Transaction>(
             new CommandDefinition(
                 sql,
                 new
                 {
                     Id = transactionId
                 },
-                cancellationToken: token))).FirstOrDefault();
+                cancellationToken: token))).FirstOrDefault().Type;
     }
 
     public async Task<List<Transaction>> GetTransactions(long accountId, CancellationToken token)
@@ -116,5 +192,23 @@ public class TransactionRepository : PgRepository, ITransactionRepository
                 cancellationToken: token));
     }
 
-    
+    public async Task DeleteCategory(long id, CancellationToken token)
+    {
+        string sql =
+            $"""
+             DELETE FROM transaction_categories
+             WHERE @Id = id
+             """;
+        
+        await using var connection = await GetConnection();
+        
+        await connection.ExecuteAsync(
+            new CommandDefinition(
+                sql,
+                new
+                {
+                    Id = id
+                },
+                cancellationToken: token));
+    }
 }

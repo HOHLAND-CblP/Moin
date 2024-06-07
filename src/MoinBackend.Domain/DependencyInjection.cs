@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MoinBackend.Domain.Contracts.Services;
+using MoinBackend.Domain.Entities;
 using MoinBackend.Domain.Services;
 using MoinBackend.Domain.Settings;
 
@@ -15,6 +16,8 @@ public static class DependencyInjection
         
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAccountService, AccountService>();
+        services.AddScoped<ICurrencyService, CurrencyService>();
+        services.AddScoped<ITransactionService, TransactionService>();
         
         return services;
     }

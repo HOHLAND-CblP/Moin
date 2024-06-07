@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using MoinBackend.Domain.Contracts.Responses;
@@ -21,7 +24,7 @@ public class UserController : BaseController
     
     [HttpGet]
     [Route("CheckUsername")]
-    public async Task<bool> IsUsernameAvailable(string username, CancellationToken token)
+    public async Task<ActionResult<bool>> IsUsernameAvailable(string username, CancellationToken token)
     {
         return await _userService.IsUsernameAvailable(username, token);
     }
@@ -29,7 +32,7 @@ public class UserController : BaseController
     
     [HttpPost]
     [Route("SignUp")]
-    public async Task<AuthenticateResponse> SignUp([FromBody] SignUpModel model, CancellationToken token)
+    public async Task<ActionResult<AuthenticateResponse>> SignUp([FromBody] SignUpModel model, CancellationToken token)
     {
         User user = new User
         {
@@ -44,15 +47,13 @@ public class UserController : BaseController
         {
             return response;
         }
-
-        Response.StatusCode = 400;
         
-        return null;
+        return StatusCode(StatusCodes.Status401Unauthorized);
     }
     
     [HttpPost]
     [Route("Login")]
-    public async Task<AuthenticateResponse> Login([FromBody]LoginModel loginModel, CancellationToken token)
+    public async Task<ActionResult<AuthenticateResponse>> Login([FromBody]LoginModel loginModel, CancellationToken token)
     {
         var response = await _userService.Login(loginModel.Username, loginModel.Password, token);
 
@@ -61,16 +62,15 @@ public class UserController : BaseController
             return response;
         }
 
-        Response.StatusCode = 400;
-
-        return null;
+        return StatusCode(StatusCodes.Status401Unauthorized);
     }
 
     [Authorize]
     [HttpDelete]
     [Route("Delete")]
-    public async Task DeleteUser(CancellationToken token)
+    public async Task<ActionResult> DeleteUser(CancellationToken token)
     {
         await _userService.DeleteUser(UserId, token);
+        return Ok();
     }
 }

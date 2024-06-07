@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MoinBackend.Domain.Contracts.Repositories;
+using MoinBackend.Domain.Contracts.Services;
+using MoinBackend.Domain.Services;
 using MoinBackend.Infrastructure.Infrastructure;
 using MoinBackend.Infrastructure.Repositories;
 using MoinBackend.Infrastructure.Settings;
@@ -16,6 +18,8 @@ public static class DependencyInjection
         
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IAccountRepository, AccountRepository>();
+        services.AddScoped<ICurrencyRepository, CurrencyRepository>();
+        services.AddScoped<ITransactionRepository, TransactionRepository>();
         
         Postgres.MapCompositeTypes();
         Postgres.AddMigration(services, 

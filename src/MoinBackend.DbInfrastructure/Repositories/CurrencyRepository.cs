@@ -6,19 +6,20 @@ using MoinBackend.Infrastructure.Settings;
 
 namespace MoinBackend.Infrastructure.Repositories;
 
-public class AccountRepository : PgRepository, IAccountRepository
+public class CurrencyRepository : PgRepository, ICurrencyRepository
 {
-    public AccountRepository(IOptions<DbsOptions> dbsOptions) : base(dbsOptions.Value.PostgresConnectionString)
-    {}
+    public CurrencyRepository(IOptions<DbsOptions> dbsOptions) : base(dbsOptions.Value.PostgresConnectionString)
+    {
+    }
     
-    public async Task<long> Create(Account account, CancellationToken token)
+    public async Task<long> Create(Currency currency, CancellationToken token)
     {
         string sql =
             $"""
-            INSERT INTO accounts (user_id, value, currency_id, creation_date)
-                VALUES (@UserId, @Value, @CurrencyId, @CreationDate)
-            returning id;
-            """;
+             INSERT INTO currencies (name, currency_code, currency_symbol)
+                 VALUES (@Name, @CurrencyCode, @CurrencySymbol)
+             returning id;
+             """;
         
         await using var connection = await GetConnection();
         
@@ -27,26 +28,25 @@ public class AccountRepository : PgRepository, IAccountRepository
                 sql,
                 new
                 {
-                    UserId = account.UserId,
-                    Value = account.Value,
-                    CurrencyId = account.CurrencyId,
-                    CreationDate = account.CreationDate
+                    Name = currency.Name,
+                    CurrencyCode = currency.CurrencyCode,
+                    CurrencySymbol = currency.CurrencySymbol,
                 },
                 cancellationToken: token))).FirstOrDefault();
     }
 
-    public async Task<Account> GetAccount(long id, CancellationToken token)
+    public async Task<Currency> GetCurrency(long id, CancellationToken token)
     {
         string sql =
-            """
-            SELECT *
-            FROM accounts
-            WHERE @Id = id
-            """;
+            $"""
+             SELECT *
+             FROM currencies
+             WHERE @Id = id
+             """;
         
         await using var connection = await GetConnection();
         
-        return (await connection.QueryAsync<Account>(
+        return (await connection.QueryAsync<Currency>(
             new CommandDefinition(
                 sql,
                 new
@@ -56,37 +56,29 @@ public class AccountRepository : PgRepository, IAccountRepository
                 cancellationToken: token))).FirstOrDefault();
     }
 
-    public async Task<List<Account>> GetAccounts(long userId, CancellationToken token)
+    public async Task<List<Currency>> GetCurrencies(CancellationToken token)
     {
         string sql =
-            """
-            SELECT *
-            FROM accounts
-            WHERE @Id = user_id
-            """;
+            $"""
+             SELECT *
+             FROM currencies;
+             """;
         
         await using var connection = await GetConnection();
         
-        return (await connection.QueryAsync<Account>(
+        return (await connection.QueryAsync<Currency>(
             new CommandDefinition(
                 sql,
-                new
-                {
-                    Id = userId
-                },
                 cancellationToken: token))).ToList();
     }
 
-    public async Task Delete(long id, CancellationToken token)
+    public async Task DeleteCurrency(long id, CancellationToken token)
     {
         string sql =
-            """
-            DELETE FROM transactions
-            WHERE @Id=account_id;
-
-            DELETE FROM accounts
-            WHERE @Id=id;
-            """;
+            $"""
+             DELETE FROM currencies
+             WHERE @Id = id
+             """;
         
         await using var connection = await GetConnection();
         
@@ -99,4 +91,6 @@ public class AccountRepository : PgRepository, IAccountRepository
                 },
                 cancellationToken: token));
     }
+
+    
 }

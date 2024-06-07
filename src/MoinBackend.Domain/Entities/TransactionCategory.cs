@@ -7,4 +7,5 @@ public class TransactionCategory
     public long Id { get; init; }
     public string Name { get; init; }
     public TransactionType Type { get; init; }
+    public long UserId { get; init; }
 }

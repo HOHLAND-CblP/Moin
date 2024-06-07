@@ -22,6 +22,7 @@ class Program
 
         services.AddDomain(config);
         services.AddDbInfrastructure(config);
+        //services.AddApiVersioning();
         services.AddControllers();
 
         
@@ -106,6 +107,7 @@ class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
+            Console.WriteLine("Development");
         }
 
         app.MapControllers();
