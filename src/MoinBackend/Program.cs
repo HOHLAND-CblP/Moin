@@ -103,12 +103,19 @@ class Program
             return;
         }
         
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-            Console.WriteLine("Development");
-        }
+        /*if (app.Environment.IsDevelopment())
+        {*/
+            app.UseSwagger(c =>
+            {
+                c.RouteTemplate = "api/swagger/{documentname}/swagger.json";
+            });
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("v1/swagger.json", "API V1");
+                options.RoutePrefix = "api/swagger";
+            });
+            /*Console.WriteLine("Development");
+        }*/
 
         app.MapControllers();
         app.MapGet("/", () => "Hello, it`s Moin!");

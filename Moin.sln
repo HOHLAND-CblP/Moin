@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoinBackend", "src\MoinBack
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoinBackend.DbInfrastructure", "src\MoinBackend.DbInfrastructure\MoinBackend.DbInfrastructure.csproj", "{99B094A2-6D60-4E13-8610-1800308361A7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{748B204A-E28D-473D-8021-43A09611A844}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "tests\Tests\Tests.csproj", "{C85C75BE-BCDF-43E9-8A36-1DDECEDC28D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +28,7 @@ Global
 		{EE2C60D1-2D4E-429F-BCF9-7C0423D05F69} = {24800738-A775-4EF7-84E0-2B8D4DFE0143}
 		{4C63184F-A9F2-41EA-A277-63E9B90B3092} = {24800738-A775-4EF7-84E0-2B8D4DFE0143}
 		{99B094A2-6D60-4E13-8610-1800308361A7} = {24800738-A775-4EF7-84E0-2B8D4DFE0143}
+		{C85C75BE-BCDF-43E9-8A36-1DDECEDC28D2} = {748B204A-E28D-473D-8021-43A09611A844}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{EE2C60D1-2D4E-429F-BCF9-7C0423D05F69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -38,5 +43,9 @@ Global
 		{99B094A2-6D60-4E13-8610-1800308361A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99B094A2-6D60-4E13-8610-1800308361A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99B094A2-6D60-4E13-8610-1800308361A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C85C75BE-BCDF-43E9-8A36-1DDECEDC28D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C85C75BE-BCDF-43E9-8A36-1DDECEDC28D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C85C75BE-BCDF-43E9-8A36-1DDECEDC28D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C85C75BE-BCDF-43E9-8A36-1DDECEDC28D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
